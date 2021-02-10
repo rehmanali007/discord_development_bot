@@ -1,0 +1,129 @@
+import nhentai
+import requests
+import json
+import os
+import discord
+import asyncio
+from discord.ext.commands import command
+from discord.ext.commands import Cog
+from discord import Embed
+from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
+from random import randint
+from zipfile import ZipFile
+
+
+class Hentai(Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.nhentai = nhentai
+        f = open('config/nhentai.json', 'r')
+        self.config = json.load(f)
+        root_location = os.getcwd()
+        self.dl_location = f'{root_location}/Downloads'
+        print('NHentai extension has loaded!')
+
+    @command(name='nhs.by.id', description='')
+    async def search_by_id(self, ctx, *, id: int):
+        await ctx.send('Searching ...')
+        results = self.nhentai.get_doujin(id)
+        if len(results.pages) != 0:
+            x = 0
+            embeds = []
+            for page in results.pages:
+                x += 1
+                e = Embed(title=f"Page {x}", color=0x115599)
+                e.add_field(name='Book ID', value=results.id, inline=False)
+                e.add_field(name='Book Title',
+                            value=results.titles['english'], inline=True)
+                e.add_field(name='Link To Story',
+                            value=results.url, inline=False)
+                e.set_image(url=page.url)
+                embeds.append(e)
+
+            paginator = BotEmbedPaginator(ctx, embeds)
+            await paginator.run()
+        else:
+            await ctx.send('No results found for the given id...\nPlease check if id is valid nhenati id.')
+
+    @search_by_id.error
+    async def error_handle(self, ctx, error):
+        if isinstance(error, discord.ext.commands.UserInputError):
+            await ctx.send('Book id is missing ...')
+            print(error)
+
+    @command(name='nhs', description='')
+    async def search_by_keyword(self, ctx, *, query: str):
+        if query in self.config.get("bannedKeywords"):
+            await ctx.send('Sorry! This keyword is banned in our server for the TOS of discord.')
+            return
+        await ctx.send('Searching for query ...')
+        results = self.nhentai.search(query)
+        if results:
+            x = 0
+            embeds = []
+            for res in results:
+                for t in res.tags:
+                    if t.name in self.config.get('bannedKeywords'):
+                        continue
+                x += 1
+                e = Embed(title=f"Result {x}", color=0x115599)
+                e.set_image(url=res.cover)
+                e.add_field(name='Book Id', value=res.id, inline=False)
+                e.add_field(name='Book Title',
+                            value=res.titles['english'], inline=False)
+                e.add_field(name='Book URL',
+                            value=res.url, inline=False)
+                embeds.append(e)
+            if not embeds:
+                await ctx.send('No results found for the given keyword...')
+                return
+            paginator = BotEmbedPaginator(ctx, embeds)
+            await paginator.run()
+        else:
+            await ctx.send('No results found for the given keyword...')
+
+    @command(name='dl_nh')
+    async def download_nh(self, ctx, *, illustration_id):
+        status = await ctx.send('Finding the illustration ..')
+        results = self.nhentai.get_doujin(id)
+        if len(results.pages) != 0:
+            await status.edit('Downloading the illustration ..')
+            ill_dl_location = f'{self.dl_location}/{illustration_id}'
+            if not os.path.exists(ill_dl_location):
+                os.makedirs(ill_dl_location)
+            zipped = f'{self.dl_location}/{illustration_id}.zip'
+            ziph = ZipFile(zipped, 'w')
+            for res in results:
+                dl_file = f'{self.dl_location}/{res.file_name}'
+                await self.download_file(res.url, dl_file)
+                ziph.write(dl_file)
+                os.remove(dl_file)
+            ziph.close()
+            to_send = open(zipped, 'rb')
+            ill = discord.File(to_send)
+            await ctx.send(files=[ill])
+
+    async def download_file(self, url, file_name):
+        with open(file_name, "wb") as file:
+            # get request
+            response = requests.get(url)
+            # write to file
+            file.write(response.content)
+
+    @search_by_keyword.error
+    @download_nh.error
+    async def error_handle_query(self, ctx, error):
+        if isinstance(error, discord.ext.commands.UserInputError):
+            await ctx.send('Search query string is missing ...')
+            print(error)
+
+
+def setup(bot):
+    bot.add_cog(Hentai(bot))
+
+
+'''
+export HTTP_PROXY="http://83.97.23.90:18080"
+export HTTPS_PROXY="https://83.97.23.90:18080"
+
+'''
