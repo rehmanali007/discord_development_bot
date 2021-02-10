@@ -4,7 +4,7 @@ import json
 
 f = open('config/main.json', 'r')
 config = json.load(f)
-
+TOKEN = config.get("bot_token")
 prefix = '!'
 
 bot = Bot(command_prefix=prefix)
@@ -21,4 +21,4 @@ async def on_ready():
 
 for e in extensions:
     bot.load_extension(e)
-bot.run('NzEyMjE1Nzk4OTY1NjAwMzc3.XsOUpg.5UEFCqDS9rQAJ9NJF-PgKUHkUgw')
+bot.run(TOKEN)
