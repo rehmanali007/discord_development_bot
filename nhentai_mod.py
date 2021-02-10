@@ -58,6 +58,7 @@ class Hentai(Cog):
             return
         await ctx.send('Searching for query ...')
         results = self.nhentai.search(query)
+        print(results)
         if results:
             x = 0
             embeds = []
