@@ -97,7 +97,7 @@ class Hentai(Cog):
             print('Created zip handler')
             print(results.pages)
             for res in results.pages:
-                dl_file = f'{self.dl_location}/{res.file_name}'
+                dl_file = f'{self.dl_location}/{results.pages.index(res)}.png'
                 print(f'Downloading file : {dl_file}')
                 await self.download_file(res.url, dl_file)
                 ziph.write(dl_file)
