@@ -11,7 +11,7 @@ from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
 from random import randint
 from zipfile import ZipFile
 
-MAX_UPLOAD_SIZE = 65536
+MAX_UPLOAD_SIZE = 8000000
 
 
 class Hentai(Cog):
