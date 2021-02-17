@@ -93,16 +93,21 @@ class Hentai(Cog):
             ill_dl_location = f'{self.dl_location}/{illustration_id}'
             if not os.path.exists(ill_dl_location):
                 os.makedirs(ill_dl_location)
-            zipped = f'{self.dl_location}/{illustration_id}.zip'
+            zipped = f'./{illustration_id}/{illustration_id}.zip'
             ziph = ZipFile(zipped, 'w')
+            parts_enabled = False
+            part = 1
             for res in results.pages:
-                dl_file = f'{self.dl_location}/{results.pages.index(res)}.png'
+                dl_file = f'./{illustration_id}{results.pages.index(res)}.png'
                 await self.download_file(res.url, dl_file)
                 if os.path.getsize(zipped) + os.path.getsize(dl_file) >= MAX_UPLOAD_SIZE:
                     print('Sending a part of the file.')
+                    parts_enabled = True
                     ziph.close()
                     to_send = open(zipped, 'rb')
-                    ill = discord.File(to_send)
+                    ill = discord.File(
+                        to_send, filename=f'{illustration_id}_part{part}.zip')
+                    part += 1
                     await ctx.send(file=ill)
                     os.remove(zipped)
                     ziph = ZipFile(zipped, 'w')
@@ -110,9 +115,12 @@ class Hentai(Cog):
                 ziph.write(dl_file)
                 os.remove(dl_file)
             ziph.close()
-            print('Zip handler closed!')
             to_send = open(zipped, 'rb')
-            ill = discord.File(to_send)
+            if parts_enabled:
+                filename = f'{illustration_id}_part{part}.zip'
+            else:
+                filename = f'{illustration_id}.zip'
+            ill = discord.File(to_send, filename=filename)
             print('Created discord file!')
             await ctx.send(file=ill)
             print('Zip file sent!')
