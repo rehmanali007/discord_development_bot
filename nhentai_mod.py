@@ -85,10 +85,10 @@ class Hentai(Cog):
 
     @command(name='dl_nh')
     async def download_nh(self, ctx, *, illustration_id):
-        status = await ctx.send('Finding the illustration ..')
+        await ctx.send('Finding the illustration ..')
         results = self.nhentai.get_doujin(id)
         if len(results.pages) != 0:
-            await status.edit('Downloading the illustration ..')
+            await ctx.send('Downloading the illustration ..')
             ill_dl_location = f'{self.dl_location}/{illustration_id}'
             if not os.path.exists(ill_dl_location):
                 os.makedirs(ill_dl_location)
@@ -103,6 +103,9 @@ class Hentai(Cog):
             to_send = open(zipped, 'rb')
             ill = discord.File(to_send)
             await ctx.send(files=[ill])
+        await ctx.send(
+            'Could not find the illustration!'
+        )
 
     async def download_file(self, url, file_name):
         with open(file_name, "wb") as file:
