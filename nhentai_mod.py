@@ -95,6 +95,7 @@ class Hentai(Cog):
             zipped = f'{self.dl_location}/{illustration_id}.zip'
             ziph = ZipFile(zipped, 'w')
             print('Created zip handler')
+            print(results)
             for res in results:
                 dl_file = f'{self.dl_location}/{res.file_name}'
                 print(f'Downloading file : {dl_file}')
@@ -103,9 +104,11 @@ class Hentai(Cog):
                 os.remove(dl_file)
                 print(f'Downloaded and packed {dl_file}')
             ziph.close()
+            print('Zip handler closed!')
             to_send = open(zipped, 'rb')
             ill = discord.File(to_send)
             await ctx.send(files=[ill])
+            print('Done!')
         await ctx.send(
             'Could not find the illustration!'
         )
