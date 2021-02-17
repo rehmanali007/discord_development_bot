@@ -58,7 +58,6 @@ class Hentai(Cog):
             return
         await ctx.send('Searching for query ...')
         results = self.nhentai.search(query)
-        print(results)
         if results:
             x = 0
             embeds = []
@@ -84,9 +83,10 @@ class Hentai(Cog):
             await ctx.send('No results found for the given keyword...')
 
     @command(name='dl_nh')
-    async def download_nh(self, ctx, *, illustration_id):
+    async def download_nh(self, ctx, *, illustration_id: int):
         await ctx.send('Finding the illustration ..')
         results = self.nhentai.get_doujin(id)
+        print('Got the find results!')
         if len(results.pages) != 0:
             await ctx.send('Downloading the illustration ..')
             ill_dl_location = f'{self.dl_location}/{illustration_id}'
