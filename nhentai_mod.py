@@ -97,9 +97,9 @@ class Hentai(Cog):
             ziph = ZipFile(zipped, 'w')
             for res in results.pages:
                 dl_file = f'{self.dl_location}/{results.pages.index(res)}.png'
-                print(f'Downloading file : {dl_file}')
                 await self.download_file(res.url, dl_file)
                 if os.path.getsize(zipped) + os.path.getsize(dl_file) >= MAX_UPLOAD_SIZE:
+                    print('Sending a part of the file.')
                     ziph.close()
                     to_send = open(zipped, 'rb')
                     ill = discord.File(to_send)
@@ -109,7 +109,6 @@ class Hentai(Cog):
 
                 ziph.write(dl_file)
                 os.remove(dl_file)
-                print(f'Downloaded and packed {dl_file}')
             ziph.close()
             print('Zip handler closed!')
             to_send = open(zipped, 'rb')
