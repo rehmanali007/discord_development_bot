@@ -95,7 +95,7 @@ class Hentai(Cog):
             zipped = f'{self.dl_location}/{illustration_id}.zip'
             ziph = ZipFile(zipped, 'w')
             print('Created zip handler')
-            print(dir(results))
+            print(results.pages)
             for res in results.pages:
                 dl_file = f'{self.dl_location}/{res.file_name}'
                 print(f'Downloading file : {dl_file}')
