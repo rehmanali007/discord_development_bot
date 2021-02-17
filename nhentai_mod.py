@@ -11,6 +11,8 @@ from disputils import BotEmbedPaginator, BotConfirmation, BotMultipleChoice
 from random import randint
 from zipfile import ZipFile
 
+MAX_UPLOAD_SIZE = 65536
+
 
 class Hentai(Cog):
     def __init__(self, bot):
@@ -90,16 +92,21 @@ class Hentai(Cog):
             await ctx.send('Downloading the illustration ..')
             ill_dl_location = f'{self.dl_location}/{illustration_id}'
             if not os.path.exists(ill_dl_location):
-                print('Created dl loacation')
                 os.makedirs(ill_dl_location)
             zipped = f'{self.dl_location}/{illustration_id}.zip'
             ziph = ZipFile(zipped, 'w')
-            print('Created zip handler')
-            print(results.pages)
             for res in results.pages:
                 dl_file = f'{self.dl_location}/{results.pages.index(res)}.png'
                 print(f'Downloading file : {dl_file}')
                 await self.download_file(res.url, dl_file)
+                if os.path.getsize(zipped) + os.path.getsize(dl_file) >= MAX_UPLOAD_SIZE:
+                    ziph.close()
+                    to_send = open(zipped, 'rb')
+                    ill = discord.File(to_send)
+                    await ctx.send(file=ill)
+                    os.remove(zipped)
+                    ziph = ZipFile(zipped, 'w')
+
                 ziph.write(dl_file)
                 os.remove(dl_file)
                 print(f'Downloaded and packed {dl_file}')
@@ -110,9 +117,8 @@ class Hentai(Cog):
             print('Created discord file!')
             await ctx.send(file=ill)
             print('Zip file sent!')
-        await ctx.send(
-            'Could not find the illustration!'
-        )
+        else:
+            await ctx.send('Could not find the illustration!')
 
     async def download_file(self, url, file_name):
         with open(file_name, "wb") as file:
