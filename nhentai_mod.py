@@ -107,8 +107,9 @@ class Hentai(Cog):
             print('Zip handler closed!')
             to_send = open(zipped, 'rb')
             ill = discord.File(to_send)
-            await ctx.send(files=[ill])
-            print('Done!')
+            print('Created discord file!')
+            await ctx.send(file=ill)
+            print('Zip file sent!')
         await ctx.send(
             'Could not find the illustration!'
         )
