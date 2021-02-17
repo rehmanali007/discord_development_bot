@@ -98,6 +98,7 @@ class Hentai(Cog):
                 await self.download_file(res.url, dl_file)
                 ziph.write(dl_file)
                 os.remove(dl_file)
+                print(f'Downloaded and packed {dl_file}')
             ziph.close()
             to_send = open(zipped, 'rb')
             ill = discord.File(to_send)
