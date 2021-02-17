@@ -93,15 +93,15 @@ class Hentai(Cog):
             ill_dl_location = f'{self.dl_location}/{illustration_id}'
             if not os.path.exists(ill_dl_location):
                 os.makedirs(ill_dl_location)
-            zipped = f'./{illustration_id}/{illustration_id}.zip'
+            zipped = f'{ill_dl_location}/{illustration_id}.zip'
             ziph = ZipFile(zipped, 'w')
             parts_enabled = False
             part = 1
             for res in results.pages:
-                dl_file = f'./{illustration_id}{results.pages.index(res)}.png'
+                dl_file = f'{ill_dl_location}/{results.pages.index(res)}.png'
                 await self.download_file(res.url, dl_file)
                 if os.path.getsize(zipped) + os.path.getsize(dl_file) >= MAX_UPLOAD_SIZE:
-                    print('Sending a part of the file.')
+                    print(f'Sending part {part}')
                     parts_enabled = True
                     ziph.close()
                     to_send = open(zipped, 'rb')
