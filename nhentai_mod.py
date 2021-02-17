@@ -121,6 +121,11 @@ class Hentai(Cog):
             # write to file
             file.write(response.content)
 
+    @command(name='test')
+    async def test(self, ctx):
+        send = discord.File(open('config/main.json', 'rb'))
+        await ctx.send(file=send)
+
     @search_by_keyword.error
     @download_nh.error
     async def error_handle_query(self, ctx, error):

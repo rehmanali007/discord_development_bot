@@ -1,0 +1,7 @@
+[2021-02-17 11:35:55,108] - [discord.client] - INFO - logging in using static token
+[2021-02-17 11:35:56,918] - [discord.gateway] - INFO - Shard ID None has sent the IDENTIFY payload.
+[2021-02-17 11:35:57,495] - [discord.gateway] - INFO - Shard ID None has connected to Gateway: ["gateway-prd-main-zh6z",{"micros":79420,"calls":["discord-sessions-prd-2-141",{"micros":78504,"calls":["start_session",{"micros":29980,"calls":["api-prd-main-x2x6",{"micros":28257,"calls":["get_user",{"micros":1636},"add_authorized_ip",{"micros":1196},"get_guilds",{"micros":3192},"coros_wait",{"micros":0}]}]},"guilds_connect",{"micros":1,"calls":[]},"presence_connect",{"micros":17971,"calls":[]}]}]}] (Session ID: 10d1a10996cc45367dd35f865de7ca4a).
+[2021-02-17 11:36:07,812] - [discord.client] - INFO - Cleaning up tasks.
+[2021-02-17 11:36:07,813] - [discord.client] - INFO - Cleaning up after 1 tasks.
+[2021-02-17 11:36:07,863] - [discord.client] - INFO - All tasks finished cancelling.
+[2021-02-17 11:36:07,863] - [discord.client] - INFO - Closing the event loop.
