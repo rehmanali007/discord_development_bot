@@ -84,10 +84,10 @@ class Hentai(Cog):
 
     @command(name='dl_nh')
     async def download_nh(self, ctx, *, illustration_id: int):
-        status = await ctx.send('Finding the illustration ..')
+        await ctx.send('Finding the illustration ..')
         results = self.nhentai.get_doujin(illustration_id)
         if len(results.pages) != 0:
-            await status.edit('Downloading the illustration ..')
+            await ctx.send('Downloading the illustration ..')
             ill_dl_location = f'{self.dl_location}/{illustration_id}'
             if not os.path.exists(ill_dl_location):
                 os.makedirs(ill_dl_location)
